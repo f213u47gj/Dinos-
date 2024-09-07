@@ -1,29 +1,28 @@
-﻿/*using DinoGame.Controllers;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using DinoDino.Data;
+
 
 namespace DinoGame.Repositories
 {
     public class ScoreRepository : IScoreRepository
     {
-        private readonly ApplicationDbContext _context;
+        private readonly DataContext _context;
 
-        public ScoreRepository(ApplicationDbContext context)
+        public ScoreRepository(DataContext context)
         {
             _context = context;
         }
 
-        public async Task<IEnumerable<Score>> GetAllAsync()
+        public async Task AddScoreAsync(Score score)
         {
-            return await _context.Scores.ToListAsync();
-        }
-
-        public async Task AddAsync(Score score)
-        {
-            _context.Scores.Add(score);
+            _context.Score.Add(score);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Score>> GetScoreAsync()
+        {
+            return await _context.Score.OrderByDescending(r => r.Lastattempt).ToListAsync();
+        }
     }
+
 }
-*/

@@ -1,37 +1,41 @@
-﻿/*using Microsoft.AspNetCore.Mvc;
+﻿using DinoGame.Repositories;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DinoGame.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ScoresController : ControllerBase
+    public class ScoreController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IScoreRepository _scoreRepository;
 
-        public ScoresController(ApplicationDbContext context)
+        public ScoreController(IScoreRepository scoreRepository)
         {
-            _context = context;
+            _scoreRepository = scoreRepository;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var results = await _scoreRepository.GetScoreAsync();
+            return View(results);
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] Score score)
+        public async Task<IActionResult> PostScore([FromBody] Score score)
         {
-            _context.Scores.Add(score);
-            _context.SaveChanges();
+            if (score == null)
+            {
+                return BadRequest();
+            }
+
+            if (score.HighScore > 0)
+            {
+                await _scoreRepository.AddScoreAsync(score);
+            }
+
+            await _scoreRepository.AddScoreAsync(score);
             return Ok();
         }
-
-        [HttpGet]
-        public IEnumerable<Score> Get()
-        {
-            return _context.Scores;
-        }
     }
-
-    public class Score
-    {
-        public int Id { get; set; }
-        public int Value { get; set; }
-    }
-}*/
+}

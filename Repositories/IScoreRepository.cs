@@ -1,13 +1,8 @@
-﻿/*using DinoGame.Controllers;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace DinoGame.Repositories
+﻿namespace DinoGame.Repositories
 {
     public interface IScoreRepository
     {
-        Task<IEnumerable<Score>> GetAllAsync();
-        Task AddAsync(Score score);
+        Task AddScoreAsync(Score score);
+        Task<IEnumerable<Score>> GetScoreAsync();
     }
 }
-*/

@@ -92,3 +92,10 @@ body {
     margin: 0 auto;
     padding: 20px;
 }
+
+.header-s {
+    text-decoration: none;
+    padding: .5rem 1rem;
+    margin-top: 20px;
+    font-size: 16px;
+}

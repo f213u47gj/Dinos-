@@ -1,0 +1,43 @@
+﻿@model IEnumerable<DinoGame.Repositories.Score>
+
+@{
+    ViewData["Title"] = "Таблица результатов";
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Score List</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+     @if (Model != null && Model.Any())
+    {
+    <h1>Таблица результатов</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Попытка</th>
+                <th>Счет</th>
+                <th>Время</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var score in Model)
+            {
+                <tr>
+                    <td>@score.ScoreId</td>
+                    <td>@score.HighScore</td>
+                    <td>@score.Lastattempt.ToString("yyyy-MM-dd")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    }
+    else
+    {
+        <p>ПУСТОТА.</p>
+    }
+</body>
+</html>

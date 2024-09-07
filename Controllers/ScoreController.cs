@@ -1,14 +1,12 @@
-﻿using DinoGame.Repositories;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using DinoDino.Models;
+using DinoGame.Repositories;
 
 namespace DinoGame.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ScoreController : ControllerBase
+    public class ScoreController : Controller
     {
         private readonly IScoreRepository _scoreRepository;
 
@@ -17,11 +15,10 @@ namespace DinoGame.Controllers
             _scoreRepository = scoreRepository;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetScores()
+        public async Task<IActionResult> Index()
         {
             var scores = await _scoreRepository.GetScoreAsync();
-            return Ok(scores);
+            return View(scores);
         }
 
         [HttpPost]

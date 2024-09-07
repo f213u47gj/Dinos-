@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="~/DinoDino.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <header>
+        <a class="header-s text-dark" asp-area="" asp-controller="Home" asp-action="Index">DinoRun</a>
+        <a class="header-s text-dark" asp-area="" asp-controller="Score" asp-action="Index">Таблица результатов</a>
+    </header>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

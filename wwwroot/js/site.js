@@ -7,13 +7,14 @@ dinoImage.src = '/images/dino.png';
 const cactusImage = new Image();
 cactusImage.src = '/images/cactus.png';
 
-let dino = { x: 50, y: 150, width: 30, height: 30, dy: 0, gravity: 0.8, jumpPower: -15 };
-let obstacles = [];
+const dino = { x: 50, y: 150, width: 30, height: 30, dy: 0, gravity: 0.8, jumpPower: -15 };
+const obstacles = [];
 let score = 0;
 let highScore = localStorage.getItem('highScore') || 0;
 let gameOver = false;
+const obstacleSpeed = 5; // Скорость препятствий
 
-document.addEventListener('keydown', function (e) {
+document.addEventListener('keydown', e => {
     if (e.key === ' ') jump();
 });
 
@@ -24,42 +25,35 @@ function jump() {
 }
 
 function createObstacle() {
-    let lastObstacleX = obstacles.length > 0 ? obstacles[obstacles.length - 1].x : 0;
-    const newObstacle = { x: canvas.width, y: 150, width: 30, height: 30 };
-
-    if (canvas.width - lastObstacleX > 300) {
-        obstacles.push(newObstacle);
+    if (canvas.width - (obstacles.length > 0 ? obstacles[obstacles.length - 1].x : 0) > 300) {
+        obstacles.push({ x: canvas.width, y: 150, width: 30, height: 30 });
     }
 }
 
 function update() {
-    if (!gameOver) {
-        dino.dy += dino.gravity;
-        dino.y += dino.dy;
+    if (gameOver) return;
 
-        if (dino.y > 150) {
-            dino.y = 150;
-            dino.dy = 0;
-        }
+    dino.dy += dino.gravity;
+    dino.y += dino.dy;
 
-        for (let i = 0; i < obstacles.length; i++) {
-            obstacles[i].x -= 5;
-
-            if (obstacles[i].x + obstacles[i].width < 0) {
-                obstacles.splice(i, 1);
-                score++;
-                i--;
-            }
-
-            if (obstacles[i] && checkCollision(dino, obstacles[i])) {
-                gameOver = true;
-                submitScore();
-            }
-        }
-
-        if (Math.random() < 0.02) createObstacle();
+    if (dino.y > 150) {
+        dino.y = 150;
+        dino.dy = 0;
     }
 
+    obstacles.forEach((obstacle, index) => {
+        obstacle.x -= obstacleSpeed;
+
+        if (obstacle.x + obstacle.width < 0) {
+            obstacles.splice(index, 1);
+            score++;
+        } else if (checkCollision(dino, obstacle)) {
+            gameOver = true;
+            submitScore();
+        }
+    });
+
+    if (Math.random() < 0.02) createObstacle();
     draw();
 }
 
@@ -77,13 +71,13 @@ function draw() {
 
     ctx.drawImage(dinoImage, dino.x, dino.y, dino.width, dino.height);
 
-    for (let i = 0; i < obstacles.length; i++) {
-        ctx.drawImage(cactusImage, obstacles[i].x, obstacles[i].y, obstacles[i].width, obstacles[i].height);
-    }
+    obstacles.forEach(obstacle => {
+        ctx.drawImage(cactusImage, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+    });
 
     ctx.font = '16px Arial';
-    ctx.fillText('Score: ' + score, 700, 50);
-    ctx.fillText('High Score: ' + highScore, 700, 80);
+    ctx.fillText(`Score: ${score}`, 700, 50);
+    ctx.fillText(`High Score: ${highScore}`, 700, 80);
 
     if (gameOver) {
         document.getElementById('gameOverMessage').style.display = 'block';
@@ -94,21 +88,20 @@ function draw() {
 function submitScore() {
     fetch('/api/scores', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ score: score })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ score })
+    }).then(() => {
+        if (score > highScore) {
+            highScore = score;
+            localStorage.setItem('highScore', highScore);
+        }
     });
-
-    if (score > highScore) {
-        highScore = score;
-        localStorage.setItem('highScore', highScore);
-    }
 }
 
 function restartGame() {
-    dino = { x: 50, y: 150, width: 30, height: 30, dy: 0, gravity: 0.8, jumpPower: -15 };
-    obstacles = [];
+    dino.y = 150;
+    dino.dy = 0;
+    obstacles.length = 0;
     score = 0;
     gameOver = false;
     document.getElementById('gameOverMessage').style.display = 'none';

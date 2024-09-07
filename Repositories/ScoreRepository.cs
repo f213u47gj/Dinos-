@@ -13,11 +13,11 @@ namespace DinoGame.Repositories
             _context = context;
         }
 
-        public async Task AddScoreAsync(Score score)
-        {
-            _context.Scores.Add(score);
-            await _context.SaveChangesAsync();
-        }
+            public async Task AddScoreAsync(Score score)
+            {
+                _context.Scores.Add(score);
+                await _context.SaveChangesAsync();
+            }
 
         public async Task<IEnumerable<Score>> GetScoreAsync()
         {

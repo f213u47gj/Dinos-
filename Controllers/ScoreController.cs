@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace DinoGame.Controllers
 {
-    public class ScoreController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ScoreController : ControllerBase
     {
         private readonly IScoreRepository _scoreRepository;
 
@@ -15,25 +17,16 @@ namespace DinoGame.Controllers
             _scoreRepository = scoreRepository;
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> GetScores()
         {
-            var results = await _scoreRepository.GetScoreAsync();
-            return View(results);
+            var scores = await _scoreRepository.GetScoreAsync();
+            return Ok(scores);
         }
 
         [HttpPost]
         public async Task<IActionResult> PostScore([FromBody] Score score)
         {
-            if (score == null)
-            {
-                return BadRequest();
-            }
-
-            if (score.HighScore > 0)
-            {
-                await _scoreRepository.AddScoreAsync(score);
-            }
-
             await _scoreRepository.AddScoreAsync(score);
             return Ok();
         }

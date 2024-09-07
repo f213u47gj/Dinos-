@@ -10,9 +10,9 @@ cactusImage.src = '/images/cactus.png';
 const dino = { x: 50, y: 150, width: 30, height: 30, dy: 0, gravity: 0.8, jumpPower: -15 };
 const obstacles = [];
 let score = 0;
-let highScore = localStorage.getItem('highScore') || 0;
+let highScore = 0;
 let gameOver = false;
-const obstacleSpeed = 5; // Скорость препятствий
+const obstacleSpeed = 5;
 
 document.addEventListener('keydown', e => {
     if (e.key === ' ') jump();
@@ -76,8 +76,8 @@ function draw() {
     });
 
     ctx.font = '16px Arial';
-    ctx.fillText(`Score: ${score}`, 700, 50);
-    ctx.fillText(`High Score: ${highScore}`, 700, 80);
+    ctx.fillText(`Score: ${score}`, 600, 50);
+    ctx.fillText(`High Score: ${highScore}`, 600, 80);
 
     if (gameOver) {
         document.getElementById('gameOverMessage').style.display = 'block';
@@ -85,28 +85,40 @@ function draw() {
     }
 }
 
-function submitScore() {
-    fetch('/api/scores', {
+function submitScore() {    
+      fetch('/api/Score', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ score })
-    }).then(() => {
-        if (score > highScore) {
-            highScore = score;
-            localStorage.setItem('highScore', highScore);
-        }
-    });
+        headers: {
+            'Content-Type': 'application/json'
+        },
+         body: JSON.stringify({ highScore: score })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log("Score submitted successfully");
+
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('highScore', highScore);
+            }
+        })
 }
 
-function restartGame() {
+async function restartGame() {
+    if (!gameOver) return;
+
     dino.y = 150;
     dino.dy = 0;
     obstacles.length = 0;
     score = 0;
     gameOver = false;
+
     document.getElementById('gameOverMessage').style.display = 'none';
     document.getElementById('restartButton').style.display = 'none';
 }
+
 
 setInterval(update, 1000 / 60);
 

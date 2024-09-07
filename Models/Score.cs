@@ -9,7 +9,7 @@ namespace DinoGame.Repositories
         [ScaffoldColumn(false)]
         public DateTime Lastattempt { get; set; }
 
-        public int HighScore { get; set; }
+        public int HighScore { get; set; } 
 
         public Score()
         {
